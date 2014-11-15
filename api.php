@@ -16,7 +16,7 @@ $api = new API($predis);
 if(isset($_GET['a'], $_GET['q'])) {
     switch ($_GET['a']) {
         case 'team':
-            //show_team($_GET['q']);
+            $api->respondTeam($_GET['q']);
             break;
         case 'player':
             $api->respondPlayer($_GET['q']);
@@ -61,6 +61,17 @@ class API {
     }
     
     public function respondTeam($team) {
-    
+       if($this->predis->exists("team_" . $team) == false) {
+           $error = array("cause" => "Team does not exist!", "status" => "ERROR");
+           echo json_encode($error);
+       } else {
+           $response = array(
+               "leader" => $this->predis->hget("team_" . $team, "leader"),
+               "members" => empty($this->predis->hget("team_" . $team, "members")) ? [] : $this->predis->hmget("team_" . $team, "members"),
+               "managers" => empty($this->predis->hget("team_" . $team, "managers")) ? [] : $this->predis->hmget("team_" . $team, "managers")
+           );
+           echo json_encode($response);
+           
+       }
     }
 }
