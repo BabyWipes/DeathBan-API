@@ -54,9 +54,13 @@ class API {
             echo json_encode($error);
             return;
         } else {
-           $response = array("name" => $player, "gold" => $this->predis->hget("players", $player));
+           $response = array("gold" => $this->predis->hget("players", $player));
            echo json_encode($response);
            return;
         }
+    }
+    
+    public function respondTeam($team) {
+    
     }
 }
